@@ -97,24 +97,67 @@ td {
 	text-align:center;
 }
 
-.mteams {
+.scorebar {
 	margin: 0 auto;
 	text-align:center;
+	height:100px;
 }
 
-.mshots {
+.teamOne{
+	width: 40%;
+	background-color: #F00;
+	/* [disabled]color: #FFF; */
+	display: block;
+	float: left;
+	height: 100%;
 }
 
-.mpassing {
+.score{
+	width:20%;
+	background-color:#333;
+	color: #FFF;
+	display:block;
+	float:left;
+	height:100%;
 }
 
-.mtackles {
+.teamTwo{
+	width:40%;
+	background-color:#00F;
+	color: #FFF;
+	display:block;
+	float:left;
+	height:100%;
 }
 
-.minfo {
+#mshots {
+	display:block;
+	width:40%;
+	float:left;
 }
 
-.mdisplay {
+#mpassing {
+	display:block;
+	width:40%;
+	float:left;
+}
+
+#mtackles {
+	display:block;
+	width:40%;
+	float:left;
+}
+
+#minfo {
+	display:block;
+	width:40%;
+	float:left;
+}
+
+#mdisplay {
+	clear:both;
+	margin-top:20px;
+	padding-top:20px;
 }
 
 /* ~~ The footer ~~ */
