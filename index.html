@@ -28,59 +28,14 @@
     
 <div class="container">
   <div class="content">
-   	<p>Content for site in here</p>
-    <p>This will include tables and graphics</p>
-    <table width="80%" border="2" cellspacing="0" cellpadding="0">
+    <p id='live'>Live Matches</p>  
+   	<p id='past'>Past Matches</p>
+      <table id="tableLive" width="80%" border="2" cellspacing="0" cellpadding="0">
   <tr>
-    <td>Today</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    
   </tr>
-  <tr>
-    <td><a href="team.html">Celtic</a></td>
-    <td><a href="game.html">score</a></td>
-    <td>Inverness CT</td>
-  </tr>
-  <tr>
-    <td>Team 3</td>
-    <td>vs</td>
-    <td>Team 4</td>
-  </tr>
-  <tr>
-    <td>Date</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td>Team 5</td>
-    <td>vs</td>
-    <td>Team 7</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
+</table>  
+    <table id="table" width="80%" border="2" cellspacing="0" cellpadding="0">
 </table>
 
     
@@ -94,4 +49,127 @@
     <a href="hmm.html">Site created by HMM Media</a>
     <!-- end .footer --></div>
 </body>
+<script>
+    
+
+var matchDetails=[];
+var xhttp;
+xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function()
+{
+    if (xhttp.readyState == 4 && xhttp.status == 200) 
+    {
+        myFunction(xhttp);
+    }
+};
+xhttp.open("GET", "http://www.xmlsoccer.com/FootballDataDemo.asmx/GetLiveScoreByLeague?ApiKey=TCDZLARAPAZJDMAFURGRYNXUTNMYSXEPDAEEUQWVVXRBVTVKOS&league=ScottishPremierLeague", true);
+xhttp.send();
+
+function myFunction(xml)
+{
+    var home, away, hTeam, aTeam, i, txt, xmlDoc; 
+    xmlDoc = xml.responseXML;
+    txt = "";
+    if( xmlDoc.getElementsByTagName("XMLSOCCER.COM").length < 2 )
+        {
+            document.getElementById("live").innerHTML = "No matches are currently being played";
+        }
+    else
+    {    
+        home = xmlDoc.getElementsByTagName("HomeGoals");
+        away = xmlDoc.getElementsByTagName("AwayGoals");
+        hTeam = xmlDoc.getElementsByTagName("HomeTeam");
+        aTeam = xmlDoc.getElementsByTagName("AwayTeam");
+
+        for (i = 0; i < home.length; i++) 
+        { 
+        txt +="<tr>" 
+            + "<td>" 
+            + hTeam[i].childNodes[0].nodeValue 
+            + "</td>"
+            + "<td onclick=getMatchData()>"
+            + home[i].childNodes[0].nodeValue
+            + " "
+            + away[i].childNodes[0].nodeValue
+            + "</td>"
+            + "<td>" 
+            + aTeam[i].childNodes[0].nodeValue 
+            + "</tr>";
+
+
+
+        }
+        document.getElementById("tableLive").innerHTML = txt;
+    }
+}
+
+var xhttp2;
+xhttp2 = new XMLHttpRequest();
+xhttp2.onreadystatechange = function()
+{
+    if (xhttp2.readyState == 4 && xhttp2.status == 200) 
+    {
+        myFunction2(xhttp2);
+    }
+};
+xhttp2.open("GET", "http://www.xmlsoccer.com/FootballDataDemo.asmx/GetFixturesByLeagueAndSeason?ApiKey=TCDZLARAPAZJDMAFURGRYNXUTNMYSXEPDAEEUQWVVXRBVTVKOS&seasonDateString=1516&league=ScottishPremierLeauge", true);
+xhttp2.send();
+
+function myFunction2(xml)
+    {
+    var home, away, hTeam, aTeam, i, txt, xmlDoc, matchId, homeId, awayId; 
+    xmlDoc = xml.responseXML;
+    txt = "";
+    home = xmlDoc.getElementsByTagName("HomeGoals");
+    away = xmlDoc.getElementsByTagName("AwayGoals");
+    hTeam = xmlDoc.getElementsByTagName("HomeTeam");
+    aTeam = xmlDoc.getElementsByTagName("AwayTeam");
+    hGoalDetails = xmlDoc.getElementsByTagName("HomeGoalDetails");
+    aGoalDetails = xmlDoc.getElementsByTagName("AwayGoalDetails");
+    matchId = xmlDoc.getElementsByTagName("Id");
+    homeId = xmlDoc.getElementsByTagName("HomeTeam_Id");
+    awayId = xmlDoc.getElementsByTagName("AwayTeam_Id");
+
+        
+    for (i = 0; i < home.length; i++) 
+    {          
+        txt +="<tr>" 
+            + "<td onclick=getTeamData("+homeId[i].childNodes[0].nodeValue+")>" 
+            + '<a href="teamInfo.html">'
+            + hTeam[i].childNodes[0].nodeValue 
+            +"</a>"
+            + "</td>"
+            + "<td onclick=getMatchData("+matchId[i].childNodes[0].nodeValue+")>"
+            + '<a href="game.html">'
+            + home[i].childNodes[0].nodeValue
+            + " "
+            + away[i].childNodes[0].nodeValue
+            +"</a>"
+            + "</td>"
+            + "<td onclick=getTeamData("+awayId[i].childNodes[0].nodeValue+")>" 
+            + '<a href="teamInfo.html">'
+            + aTeam[i].childNodes[0].nodeValue 
+            +"</a>"
+            +"</td>"                
+            +"</tr>";
+
+    }
+    document.getElementById("table").innerHTML = txt;
+}        
+
+//send match id from clicked item to thsi function which then saves it in local storage and can then be loaded by the next page
+function getMatchData(matchId)
+{        
+    var id = matchId;
+    localStorage.setItem("matchID",matchId);
+}
+
+function getTeamData(teamId)
+{        
+    var tId = teamId;
+    localStorage.setItem("teamID",teamId);
+//    alert(teamId);
+}    
+    
+</script>
 </html>
